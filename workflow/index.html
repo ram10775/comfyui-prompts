@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="ComfyUI + Qwen GGUF 工作流 JSON 下載 - txt2img 與 img2img 完整流程"><title>工作流下載 - ComfyUI Prompts</title><link rel="stylesheet" href="/_astro/Layout.CKLFs4Rr.css"></head> <body> <header class="header"> <div class="header-inner"> <a href="/" class="logo"> <span class="logo-icon">🎨</span>
+ComfyUI Prompts
+</a> <nav> <a href="/">首頁</a> <a href="/prompts/">提示詞</a> <a href="/guide/">參數指南</a> <a href="/workflow/">工作流</a> </nav> </div> </header> <main>  </main> <footer class="footer"> <div class="container"> <p>🎨 ComfyUI + Qwen GGUF 提示詞資料庫</p> <p style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem;">
+所有提示詞均基於 Qwen Image Edit GGUF 模型實測有效 · denoise 參數已標註
+</p> </div> </footer> <script type="module">document.querySelectorAll(".prompt-text").forEach(t=>{t.addEventListener("click",()=>{const e=t.dataset.prompt;e&&navigator.clipboard.writeText(e).then(()=>{t.classList.add("copied"),t.classList.add("expanded"),o("✅ 提示詞已複製到剪貼簿！"),setTimeout(()=>t.classList.remove("copied"),2e3)})})});function o(t){const e=document.createElement("div");e.className="toast",e.textContent=t,document.body.appendChild(e),setTimeout(()=>e.remove(),2e3)}</script> </body> </html> <div class="container" style="padding: 40px 24px;"> <div class="breadcrumb"> <a href="/">首頁</a> <span>›</span> 工作流下載
+</div> <h1 style="font-size: 2rem; margin-bottom: 16px;">📦 ComfyUI 工作流</h1> <p style="color: var(--text-secondary); margin-bottom: 32px;">
+以下工作流已於 V100 32GB + ComfyUI-GGUF + Qwen Image Edit 實測通過。
+    下載後直接匯入 ComfyUI 即可使用。
+</p> <div class="guide-section"> <h3>🖼️ Text-to-Image 工作流</h3> <p style="color: var(--text-secondary); margin-bottom: 16px;">
+純文字生圖。適合從 scratch 創作。denoise = 1.0。
+</p> <pre style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">{
+  &quot;1&quot;: {
+    &quot;class_type&quot;: &quot;UnetLoaderGGUF&quot;,
+    &quot;inputs&quot;: {
+      &quot;unet_name&quot;: &quot;Qwen_Image_Edit-Q4_K_M.gguf&quot;
+    }
+  },
+  &quot;2&quot;: {
+    &quot;class_type&quot;: &quot;CLIPLoader&quot;,
+    &quot;inputs&quot;: {
+      &quot;clip_name&quot;: &quot;qwen_2.5_vl_7b_fp8_scaled.safetensors&quot;,
+      &quot;type&quot;: &quot;qwen_image&quot;
+    }
+  },
+  &quot;3&quot;: {
+    &quot;class_type&quot;: &quot;CLIPTextEncode&quot;,
+    &quot;inputs&quot;: {
+      &quot;text&quot;: &quot;吉卜力工作室風格，宮崎駿水彩畫風，柔和的陽光，翠綠的草地&quot;,
+      &quot;clip&quot;: [
+        &quot;2&quot;,
+        0
+      ]
+    }
+  },
+  &quot;4&quot;: {
+    &quot;class_type&quot;: &quot;VAELoader&quot;,
+    &quot;inputs&quot;: {
+      &quot;vae_name&quot;: &quot;qwen_image_vae.safetensors&quot;
+    }
+  },
+  &quot;5&quot;: {
+    &quot;class_type&quot;: &quot;EmptySD3LatentImage&quot;,
+    &quot;inputs&quot;: {
+      &quot;width&quot;: 512,
+      &quot;height&quot;: 512,
+      &quot;batch_size&quot;: 1
+    }
+  },
+  &quot;6&quot;: {
+    &quot;class_type&quot;: &quot;KSampler&quot;,
+    &quot;inputs&quot;: {
+      &quot;model&quot;: [
+        &quot;1&quot;,
+        0
+      ],
+      &quot;seed&quot;: 42,
+      &quot;steps&quot;: 20,
+      &quot;cfg&quot;: 7,
+      &quot;sampler_name&quot;: &quot;euler&quot;,
+      &quot;scheduler&quot;: &quot;normal&quot;,
+      &quot;positive&quot;: [
+        &quot;3&quot;,
+        0
+      ],
+      &quot;negative&quot;: [
+        &quot;3&quot;,
+        0
+      ],
+      &quot;latent_image&quot;: [
+        &quot;5&quot;,
+        0
+      ],
+      &quot;denoise&quot;: 1
+    }
+  },
+  &quot;7&quot;: {
+    &quot;class_type&quot;: &quot;VAEDecode&quot;,
+    &quot;inputs&quot;: {
+      &quot;samples&quot;: [
+        &quot;6&quot;,
+        0
+      ],
+      &quot;vae&quot;: [
+        &quot;4&quot;,
+        0
+      ]
+    }
+  },
+  &quot;8&quot;: {
+    &quot;class_type&quot;: &quot;SaveImage&quot;,
+    &quot;inputs&quot;: {
+      &quot;images&quot;: [
+        &quot;7&quot;,
+        0
+      ],
+      &quot;filename_prefix&quot;: &quot;output&quot;
+    }
+  }
+}</pre> <button onclick="downloadWorkflow('txt2img')" style="background: var(--accent); color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+⬇️ 下載 txt2img.json
+</button> </div> <div class="guide-section"> <h3>🔄 Img2Img 風格轉換工作流</h3> <p style="color: var(--text-secondary); margin-bottom: 16px;">
+照片風格轉換。將圖片放入 ComfyUI <code>input/</code> 目錄。denoise = 0.5（最佳平衡）。
+</p> <pre style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">{
+  &quot;1&quot;: {
+    &quot;class_type&quot;: &quot;UnetLoaderGGUF&quot;,
+    &quot;inputs&quot;: {
+      &quot;unet_name&quot;: &quot;Qwen_Image_Edit-Q4_K_M.gguf&quot;
+    }
+  },
+  &quot;2&quot;: {
+    &quot;class_type&quot;: &quot;CLIPLoader&quot;,
+    &quot;inputs&quot;: {
+      &quot;clip_name&quot;: &quot;qwen_2.5_vl_7b_fp8_scaled.safetensors&quot;,
+      &quot;type&quot;: &quot;qwen_image&quot;
+    }
+  },
+  &quot;3&quot;: {
+    &quot;class_type&quot;: &quot;CLIPTextEncode&quot;,
+    &quot;inputs&quot;: {
+      &quot;text&quot;: &quot;吉卜力工作室風格，宮崎駿水彩畫風&quot;,
+      &quot;clip&quot;: [
+        &quot;2&quot;,
+        0
+      ]
+    }
+  },
+  &quot;4&quot;: {
+    &quot;class_type&quot;: &quot;VAELoader&quot;,
+    &quot;inputs&quot;: {
+      &quot;vae_name&quot;: &quot;qwen_image_vae.safetensors&quot;
+    }
+  },
+  &quot;5&quot;: {
+    &quot;class_type&quot;: &quot;LoadImage&quot;,
+    &quot;inputs&quot;: {
+      &quot;image&quot;: &quot;input_image.png&quot;
+    }
+  },
+  &quot;6&quot;: {
+    &quot;class_type&quot;: &quot;VAEEncode&quot;,
+    &quot;inputs&quot;: {
+      &quot;pixels&quot;: [
+        &quot;5&quot;,
+        0
+      ],
+      &quot;vae&quot;: [
+        &quot;4&quot;,
+        0
+      ]
+    }
+  },
+  &quot;7&quot;: {
+    &quot;class_type&quot;: &quot;KSampler&quot;,
+    &quot;inputs&quot;: {
+      &quot;model&quot;: [
+        &quot;1&quot;,
+        0
+      ],
+      &quot;seed&quot;: 12345,
+      &quot;steps&quot;: 30,
+      &quot;cfg&quot;: 8.5,
+      &quot;sampler_name&quot;: &quot;euler&quot;,
+      &quot;scheduler&quot;: &quot;normal&quot;,
+      &quot;positive&quot;: [
+        &quot;3&quot;,
+        0
+      ],
+      &quot;negative&quot;: [
+        &quot;3&quot;,
+        0
+      ],
+      &quot;latent_image&quot;: [
+        &quot;6&quot;,
+        0
+      ],
+      &quot;denoise&quot;: 0.5
+    }
+  },
+  &quot;8&quot;: {
+    &quot;class_type&quot;: &quot;VAEDecode&quot;,
+    &quot;inputs&quot;: {
+      &quot;samples&quot;: [
+        &quot;7&quot;,
+        0
+      ],
+      &quot;vae&quot;: [
+        &quot;4&quot;,
+        0
+      ]
+    }
+  },
+  &quot;9&quot;: {
+    &quot;class_type&quot;: &quot;SaveImage&quot;,
+    &quot;inputs&quot;: {
+      &quot;images&quot;: [
+        &quot;8&quot;,
+        0
+      ],
+      &quot;filename_prefix&quot;: &quot;output&quot;
+    }
+  }
+}</pre> <button onclick="downloadWorkflow('img2img')" style="background: var(--accent-purple); color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+⬇️ 下載 img2img.json
+</button> </div> <div class="guide-section"> <h3>📋 模型安裝清單</h3> <p style="color: var(--text-secondary); margin-bottom: 16px;">
+使用前請確認以下模型已安裝：
+</p> <table class="guide-table"> <thead> <tr><th>組件</th><th>檔名</th><th>路徑</th></tr> </thead> <tbody> <tr> <td>UNet</td> <td><code>Qwen_Image_Edit-Q4_K_M.gguf</code></td> <td><code>models/unet/</code></td> </tr> <tr> <td>CLIP</td> <td><code>qwen_2.5_vl_7b_fp8_scaled.safetensors</code></td> <td><code>models/clip/</code></td> </tr> <tr> <td>VAE</td> <td><code>qwen_image_vae.safetensors</code></td> <td><code>models/vae/</code></td> </tr> <tr> <td>mmproj</td> <td><code>Qwen2.5-VL-7B-Instruct-mmproj-BF16.gguf</code></td> <td><code>models/text_encoders/mmproj/</code></td> </tr> </tbody> </table> </div> <div class="guide-section"> <h3>⚡ 使用方式</h3> <ol style="color: var(--text-secondary); padding-left: 20px; line-height: 2;"> <li>下載 JSON 檔案</li> <li>打開 ComfyUI Web UI</li> <li>點擊 <strong>Load</strong> → 選擇下載的 JSON 檔案</li> <li>修改 CLIPTextEncode 節點的 <code>text</code> 參數</li> <li>img2img: 將圖片放入 <code>ComfyUI/input/</code> 目錄</li> <li>按下 <strong>Queue Prompt</strong> 開始生成</li> </ol> </div> </div> 
