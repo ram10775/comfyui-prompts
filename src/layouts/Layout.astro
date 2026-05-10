@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'ComfyUI + Qwen GGUF 中文提示詞資料庫 - 風格轉換、寫實人像、角色設計、商業應用' } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <span class="logo-icon">🎨</span>
+          ComfyUI Prompts
+        </a>
+        <nav>
+          <a href="/">首頁</a>
+          <a href="/prompts/">提示詞</a>
+          <a href="/guide/">參數指南</a>
+          <a href="/workflow/">工作流</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>🎨 ComfyUI + Qwen GGUF 提示詞資料庫</p>
+        <p style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem;">
+          所有提示詞均基於 Qwen Image Edit GGUF 模型實測有效 · denoise 參數已標註
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll('.prompt-text').forEach(el => {
+        el.addEventListener('click', () => {
+          const text = el.dataset.prompt;
+          if (text) {
+            navigator.clipboard.writeText(text).then(() => {
+              el.classList.add('copied');
+              el.classList.add('expanded');
+              showToast('✅ 提示詞已複製到剪貼簿！');
+              setTimeout(() => el.classList.remove('copied'), 2000);
+            });
+          }
+        });
+      });
+
+      function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      }
+    </script>
+  </body>
+</html>

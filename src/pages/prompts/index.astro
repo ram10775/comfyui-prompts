@@ -1,0 +1,113 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import promptsData from '../../data/prompts.json';
+
+const categories = promptsData.categories;
+const url = new URL(Astro.url);
+const query = url.searchParams.get('q')?.toLowerCase() || '';
+
+let filteredPrompts = categories.flatMap(cat =>
+  cat.prompts.map(p => ({ ...p, categoryName: cat.name, categoryIcon: cat.icon, categoryId: cat.id }))
+);
+
+if (query) {
+  filteredPrompts = filteredPrompts.filter(p =>
+    p.title.toLowerCase().includes(query) ||
+    p.prompt_zh.toLowerCase().includes(query) ||
+    p.tags.some(t => t.toLowerCase().includes(query)) ||
+    p.categoryName.includes(query)
+  );
+}
+---
+<Layout title="所有提示詞 - ComfyUI Prompts" />
+
+<div class="container" style="padding: 40px 24px;">
+  <div class="breadcrumb">
+    <a href="/">首頁</a> <span>›</span> 所有提示詞
+    {query && <span style="margin-left: 8px; color: var(--accent);">搜尋: {query}</span>}
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h1 style="font-size: 1.8rem;">
+      {query ? `🔍 搜尋結果 (${filteredPrompts.length})` : '📚 所有提示詞'}
+    </h1>
+  </div>
+
+  <div class="search-box" style="margin-bottom: 32px;">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="搜尋提示詞..." value={query} />
+  </div>
+
+  {categories.map(cat => {
+    const catPrompts = cat.prompts.filter(p =>
+      !query || p.title.toLowerCase().includes(query) ||
+      p.prompt_zh.toLowerCase().includes(query) ||
+      p.tags.some(t => t.toLowerCase().includes(query))
+    );
+    if (catPrompts.length === 0) return null;
+
+    return (
+      <div style="margin-bottom: 48px;">
+        <h2 style="font-size: 1.4rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          {cat.icon} {cat.name}
+          <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 400;">({catPrompts.length})</span>
+        </h2>
+        <div class="prompts-grid">
+          {catPrompts.map(prompt => (
+            <div class="prompt-card">
+              <div class="prompt-header">
+                <span class="prompt-title">{prompt.title}</span>
+                <span class="prompt-tag">免費</span>
+              </div>
+              <div class="prompt-tags">
+                {prompt.tags.map(tag => <span>{tag}</span>)}
+              </div>
+              <div class="prompt-text" data-prompt={prompt.prompt_zh}>
+                {prompt.prompt_zh}
+              </div>
+              <div class="params-grid">
+                <div class="param">
+                  <div class="param-label">denoise</div>
+                  <div class="param-value">{prompt.params.denoise}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">cfg</div>
+                  <div class="param-value">{prompt.params.cfg}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">steps</div>
+                  <div class="param-value">{prompt.params.steps}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">解析度</div>
+                  <div class="param-value">{prompt.params.resolution}</div>
+                </div>
+              </div>
+              <div class="tip">💡 {prompt.tips}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  })}
+
+  {filteredPrompts.length === 0 && query && (
+    <div style="text-align: center; padding: 60px 0; color: var(--text-secondary);">
+      <p style="font-size: 3rem; margin-bottom: 16px;">🔍</p>
+      <p>找不到 「{query}」 相關的提示詞</p>
+      <p style="margin-top: 8px; font-size: 0.9rem;">試試其他關鍵字，例如: 吉卜力、人像、水墨</p>
+    </div>
+  )}
+</div>
+
+<script>
+  document.getElementById('search')?.addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    if (q.length >= 2 || e.inputType === 'DeleteContentBackward') {
+      const url = new URL(window.location.href);
+      if (q) url.searchParams.set('q', q);
+      else url.searchParams.delete('q');
+      window.location.search = url.search;
+    }
+  });
+</script>

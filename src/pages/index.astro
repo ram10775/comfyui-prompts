@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+import promptsData from '../data/prompts.json';
+
+const categories = promptsData.categories;
+const totalPrompts = categories.reduce((sum, cat) => sum + cat.prompts.length, 0);
+---
+<Layout title="ComfyUI Prompts - 中文提示詞資料庫" description="ComfyUI + Qwen GGUF 中文提示詞資料庫，涵蓋風格轉換、寫實人像、角色設計、商業應用等 20+ 經實測有效的提示詞" />
+
+<section class="hero">
+  <div class="container">
+    <h1>🎨 ComfyUI 提示詞資料庫</h1>
+    <p>基於 Qwen Image Edit GGUF 實測有效的中文提示詞集合<br />
+    涵蓋 風格轉換 · 寫實人像 · 角色設計 · 商業應用</p>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search" placeholder="搜尋提示詞... (例: 吉卜力、人像、水彩)" />
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">{totalPrompts}+</div>
+        <div class="stat-label">提示詞</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">{categories.length}</div>
+        <div class="stat-label">分類</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">實測有效</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">📂 瀏覽分類</h2>
+    <div class="categories-grid">
+      {categories.map(cat => (
+        <a href={`/prompts/${cat.id}/`} class="category-card">
+          <div class="category-icon">{cat.icon}</div>
+          <h3>{cat.name}</h3>
+          <p>{cat.description}</p>
+          <span class="category-count">{cat.prompts.length} 筆提示詞</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: var(--bg-secondary); padding: 60px 24px;">
+  <div class="container">
+    <h2 class="section-title">⚡ 快速開始</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;">
+        <h3 style="margin-bottom: 12px; color: var(--accent);">1. 選擇提示詞</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">從資料庫中找到你需要的提示詞，點擊即可複製中文或英文版本</p>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;">
+        <h3 style="margin-bottom: 12px; color: var(--accent);">2. 設定參數</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">使用建議的 denoise / cfg / steps 參數，直接套用即可出圖</p>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;">
+        <h3 style="margin-bottom: 12px; color: var(--accent);">3. 在 ComfyUI 執行</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">將提示詞貼到 ComfyUI CLIPTextEncode 節點，按下 Queue Prompt 即可</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">🔥 熱門提示詞</h2>
+    <div class="prompts-grid">
+      {categories.flatMap(cat => cat.prompts).slice(0, 6).map(prompt => (
+        <div class="prompt-card">
+          <div class="prompt-header">
+            <span class="prompt-title">{prompt.title}</span>
+            <span class="prompt-tag">免費</span>
+          </div>
+          <div class="prompt-tags">
+            {prompt.tags.map(tag => <span>{tag}</span>)}
+          </div>
+          <div class="prompt-text" data-prompt={prompt.prompt_zh}>
+            {prompt.prompt_zh}
+          </div>
+          <div class="params-grid">
+            <div class="param">
+              <div class="param-label">denoise</div>
+              <div class="param-value">{prompt.params.denoise}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">cfg</div>
+              <div class="param-value">{prompt.params.cfg}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">steps</div>
+              <div class="param-value">{prompt.params.steps}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">解析度</div>
+              <div class="param-value">{prompt.params.resolution}</div>
+            </div>
+          </div>
+          <div class="tip">💡 {prompt.tips}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Search functionality
+  document.getElementById('search')?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    if (query.length >= 2) {
+      window.location.href = `/prompts/?q=${encodeURIComponent(query)}`;
+    }
+  });
+</script>
