@@ -7,6 +7,9 @@ interface Props {
 }
 
 const { title, description = 'ComfyUI + Qwen GGUF 中文提示詞資料庫 - 風格轉換、寫實人像、角色設計、商業應用' } = Astro.props;
+
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
 ---
 <!doctype html>
 <html lang="zh-Hant">
@@ -19,15 +22,15 @@ const { title, description = 'ComfyUI + Qwen GGUF 中文提示詞資料庫 - 風
   <body>
     <header class="header">
       <div class="header-inner">
-        <a href="/" class="logo">
+        <a href={baseUrl} class="logo">
           <span class="logo-icon">🎨</span>
           ComfyUI Prompts
         </a>
         <nav>
-          <a href="/">首頁</a>
-          <a href="/prompts/">提示詞</a>
-          <a href="/guide/">參數指南</a>
-          <a href="/workflow/">工作流</a>
+          <a href={baseUrl + '/'}>首頁</a>
+          <a href={baseUrl + '/prompts/'}>提示詞</a>
+          <a href={baseUrl + '/guide/'}>參數指南</a>
+          <a href={baseUrl + '/workflow/'}>工作流</a>
         </nav>
       </div>
     </header>

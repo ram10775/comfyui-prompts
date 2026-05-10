@@ -10,13 +10,15 @@ export async function getStaticPaths() {
 }
 
 const { cat } = Astro.props;
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
 ---
 <Layout title={`${cat.name} - ComfyUI Prompts`} description={`${cat.name} | ComfyUI + Qwen GGUF ${cat.description}`} />
 
 <div class="container" style="padding: 40px 24px;">
   <div class="breadcrumb">
-    <a href="/">首頁</a> <span>›</span>
-    <a href="/prompts/">所有提示詞</a> <span>›</span>
+    <a href={baseUrl}>首頁</a> <span>›</span>
+    <a href={baseUrl + '/prompts/'}>所有提示詞</a> <span>›</span>
     {cat.name}
   </div>
 

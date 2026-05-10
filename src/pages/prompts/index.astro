@@ -18,12 +18,15 @@ if (query) {
     p.categoryName.includes(query)
   );
 }
+
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
 ---
 <Layout title="所有提示詞 - ComfyUI Prompts" />
 
 <div class="container" style="padding: 40px 24px;">
   <div class="breadcrumb">
-    <a href="/">首頁</a> <span>›</span> 所有提示詞
+    <a href={baseUrl}>首頁</a> <span>›</span> 所有提示詞
     {query && <span style="margin-left: 8px; color: var(--accent);">搜尋: {query}</span>}
   </div>
 

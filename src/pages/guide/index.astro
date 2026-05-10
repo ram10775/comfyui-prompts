@@ -1,11 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
 ---
 <Layout title="參數指南 - ComfyUI Prompts" description="ComfyUI + Qwen GGUF 參數指南 - denoise、cfg、steps 完整說明" />
 
 <div class="container" style="padding: 40px 24px;">
   <div class="breadcrumb">
-    <a href="/">首頁</a> <span>›</span> 參數指南
+    <a href={baseUrl}>首頁</a> <span>›</span> 參數指南
   </div>
 
   <h1 style="font-size: 2rem; margin-bottom: 32px;">⚙️ 參數指南</h1>
