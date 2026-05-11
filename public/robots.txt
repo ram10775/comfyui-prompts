@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ram10775.github.io/comfyui-prompts/sitemap-index.xml

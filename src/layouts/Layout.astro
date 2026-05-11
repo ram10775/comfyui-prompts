@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
-const { title = 'ComfyUI Prompts', description = 'ComfyUI 中文提示詞資料庫 - 風格轉換、寫實人像、角色設計' } = Astro.props;
+const { title = 'ComfyUI Prompts', description = 'ComfyUI 中文提示詞資料庫 - 風格轉換、寫實人像、角色設計', image = 'https://ram10775.github.io/comfyui-prompts/og.png' } = Astro.props;
 const base = '/comfyui-prompts';
+const siteUrl = 'https://ram10775.github.io/comfyui-prompts';
+const ogImage = image || `${siteUrl}/og.png`;
 ---
 <!doctype html>
 <html lang="zh-Hant">
@@ -11,6 +13,33 @@ const base = '/comfyui-prompts';
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href={base + '/favicon.svg'} />
+    <link rel="canonical" href={`${siteUrl}${Astro.url.pathname}`} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${siteUrl}${Astro.url.pathname}`} />
+    <meta property="og:title" content={`${title} | ComfyUI 提示詞資料庫`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="zh_TW" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | ComfyUI 提示詞資料庫`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ComfyUI Prompts",
+      "url": siteUrl,
+      "description": description,
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/prompts/?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    })}} />
     <title>{title}</title>
   </head>
   <body>
