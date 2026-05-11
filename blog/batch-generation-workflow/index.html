@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="自動化批次處理工作流設定，包含批量載入、參數統一、輸出管理，大幅提升生產效率。"><title>ComfyUI 批次生圖工作流：一次處理 100 張照片 | ComfyUI Prompts</title><link rel="stylesheet" href="/comfyui-prompts/_astro/Layout.CKLFs4Rr.css">
+<style>.article-header[data-astro-cid-hzn6opwr]{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg-primary) 100%)}.article-header[data-astro-cid-hzn6opwr] h1[data-astro-cid-hzn6opwr]{font-size:2.2rem;font-weight:800;margin-bottom:16px;line-height:1.3;max-width:800px;margin-left:auto;margin-right:auto}.article-meta[data-astro-cid-hzn6opwr]{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.article-meta[data-astro-cid-hzn6opwr] span[data-astro-cid-hzn6opwr]{background:var(--bg-tertiary);color:var(--text-secondary);padding:4px 12px;border-radius:20px;font-size:.85rem}.article-body[data-astro-cid-hzn6opwr]{max-width:800px;margin:0 auto;padding:40px 24px}.article-body[data-astro-cid-hzn6opwr] h2[data-astro-cid-hzn6opwr]{font-size:1.5rem;font-weight:700;margin-top:40px;margin-bottom:16px;color:var(--accent)}.article-body[data-astro-cid-hzn6opwr] h3[data-astro-cid-hzn6opwr]{font-size:1.2rem;font-weight:600;margin-top:24px;margin-bottom:12px}.article-body[data-astro-cid-hzn6opwr] p[data-astro-cid-hzn6opwr]{margin-bottom:16px;line-height:1.8;color:var(--text-secondary)}.article-body[data-astro-cid-hzn6opwr] code[data-astro-cid-hzn6opwr]{background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:.9em;color:var(--accent);font-family:SF Mono,Fira Code,monospace}.article-body[data-astro-cid-hzn6opwr] pre[data-astro-cid-hzn6opwr]{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0}.article-body[data-astro-cid-hzn6opwr] pre[data-astro-cid-hzn6opwr] code[data-astro-cid-hzn6opwr]{background:none;padding:0;color:var(--text-primary)}.article-body[data-astro-cid-hzn6opwr] ul[data-astro-cid-hzn6opwr],.article-body[data-astro-cid-hzn6opwr] ol[data-astro-cid-hzn6opwr]{margin:16px 0;padding-left:24px}.article-body[data-astro-cid-hzn6opwr] li[data-astro-cid-hzn6opwr]{margin-bottom:8px;line-height:1.6;color:var(--text-secondary)}.article-body[data-astro-cid-hzn6opwr] hr[data-astro-cid-hzn6opwr]{border:none;border-top:1px solid var(--border);margin:32px 0}.article-body[data-astro-cid-hzn6opwr] strong[data-astro-cid-hzn6opwr]{color:var(--text-primary)}.article-body[data-astro-cid-hzn6opwr] blockquote[data-astro-cid-hzn6opwr]{border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;background:var(--bg-secondary);border-radius:0 8px 8px 0;color:var(--text-secondary)}.article-nav[data-astro-cid-hzn6opwr]{max-width:800px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}@media(max-width:768px){.article-header[data-astro-cid-hzn6opwr] h1[data-astro-cid-hzn6opwr]{font-size:1.6rem}.article-nav[data-astro-cid-hzn6opwr]{flex-direction:column;gap:12px}}
+</style></head> <body> <header class="header"> <div class="header-inner"> <a href="https://ram10775.github.ioundefined" class="logo"> <span class="logo-icon">🎨</span>
+ComfyUI Prompts
+</a> <nav> <a href="https://ram10775.github.ioundefined/">首頁</a> <a href="https://ram10775.github.ioundefined/prompts/">提示詞</a> <a href="https://ram10775.github.ioundefined/guide/">參數指南</a> <a href="https://ram10775.github.ioundefined/blog/">教學</a> <a href="https://ram10775.github.ioundefined/workflow/">工作流</a> </nav> </div> </header> <main>   <div class="article-header" data-astro-cid-hzn6opwr> <h1 data-astro-cid-hzn6opwr>ComfyUI 批次生圖工作流：一次處理 100 張照片</h1> <div class="article-meta" data-astro-cid-hzn6opwr> <span data-astro-cid-hzn6opwr>進階</span><span data-astro-cid-hzn6opwr>2026-05-14</span><span data-astro-cid-hzn6opwr>⏱ 10 分鐘</span> <span data-astro-cid-hzn6opwr>batch</span><span data-astro-cid-hzn6opwr>工作流</span><span data-astro-cid-hzn6opwr>自動化</span><span data-astro-cid-hzn6opwr>進階</span> </div> </div> <div class="article-body" data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>為什麼需要批次處理？</h2> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>手動一張一張處理的痛點：</strong></p> <ul data-astro-cid-hzn6opwr> <li data-astro-cid-hzn6opwr>❌ 100 張照片要點擊 100 次 Queue Prompt</li> <li data-astro-cid-hzn6opwr>❌ 每張都要重新載入圖片</li> <li data-astro-cid-hzn6opwr>❌ 參數設定了 100 遍</li> <li data-astro-cid-hzn6opwr>❌ 輸出檔名混亂</li> </ul> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>批次處理的優勢：</strong></p> <ul data-astro-cid-hzn6opwr> <li data-astro-cid-hzn6opwr>✅ 一次設定，全部自動完成</li> <li data-astro-cid-hzn6opwr>✅ 統一的參數和風格</li> <li data-astro-cid-hzn6opwr>✅ 自動命名的輸出目錄</li> <li data-astro-cid-hzn6opwr>✅ 可以離線運行</li> </ul> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>批次處理工作流架構</h2> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>LoadImage Batch (批次載入)
+        ↓
+VAE Encode (統一編碼)
+        ↓
+KSampler (統一參數採樣)
+        ↓
+VAE Decode (統一解碼)
+        ↓
+SaveImage Batch (批次儲存)</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>方法 1：ComfyUI 內建批次模式</h2> <h3 data-astro-cid-hzn6opwr>步驟</h3> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>1. 準備輸入圖片</strong></p> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>ComfyUI/input/
+├── photo_001.jpg
+├── photo_002.jpg
+├── photo_003.jpg
+└── ...</code></pre> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>2. 使用 LoadImage Batch 節點</strong></p> <ul data-astro-cid-hzn6opwr> <li data-astro-cid-hzn6opwr>將所有圖片放到 <code data-astro-cid-hzn6opwr>input/</code> 目錄</li> <li data-astro-cid-hzn6opwr>在 KSampler 設定統一參數</li> <li data-astro-cid-hzn6opwr>點擊 Queue Prompt 一次</li> </ul> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>3. 輸出管理</strong></p> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>ComfyUI/output/
+├── batch_001_001.png
+├── batch_002_002.png
+├── batch_003_003.png
+└── ...</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>方法 2：Python API 自動化腳本</h2> <h3 data-astro-cid-hzn6opwr>安裝依賴</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>pip install requests tqdm pillow</code></pre> <h3 data-astro-cid-hzn6opwr>批次處理腳本</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>import requests, os, json
+from tqdm import tqdm
+
+COMFYUI_API = 'http://127.0.0.1:8188'
+
+def queue_prompt(workflow):
+    data = dict(prompt=workflow)
+    response = requests.post(COMFYUI_API + '/prompt', json=data)
+    return response.json().get('prompt_id')
+
+def get_history(pid):
+    response = requests.get(COMFYUI_API + '/history/' + pid)
+    return response.json()
+
+def batch_process(input_dir, output_dir, prompt, denoise=0.5, cfg=7.0, steps=20):
+    os.makedirs(output_dir, exist_ok=True)
+    images = [f for f in os.listdir(input_dir)
+              if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    for img_name in tqdm(images, desc='Processing'):
+        with open('workflow.json') as f:
+            workflow = json.load(f)
+        workflow['2']['inputs']['image'] = img_name
+        workflow['6']['inputs']['text'] = prompt
+        workflow['3']['inputs']['denoise'] = denoise
+        workflow['3']['inputs']['cfg'] = cfg
+        workflow['3']['inputs']['steps'] = steps
+        pid = queue_prompt(workflow)
+        while True:
+            history = get_history(pid)
+            if pid in history:
+                break
+    print('Done: ' + str(len(images)) + ' images')
+
+batch_process(
+    input_dir='./photos/', output_dir='./results/',
+    prompt='吉卜力工作室風格',
+    denoise=0.5, cfg=7.0, steps=20
+)</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>方法 3：Cron 定時批次</h2> <h3 data-astro-cid-hzn6opwr>自動排程處理</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr># 每天凌晨 3 點自動處理新照片
+0 3 * * * cd ~/.hermes/scripts && python batch_img2img.py</code></pre> <h3 data-astro-cid-hzn6opwr>配置檔案範例</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>styles = [
+  dict(name='ghibli', prompt='吉卜力工作室風格...', denoise=0.5),
+  dict(name='shinkai', prompt='新海誠風格...', denoise=0.5)
+]</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>輸出目錄管理</h2> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>output/
+├── ghibli/          # 吉卜力風格
+│   ├── 001.png
+│   └── 002.png
+├── shinkai/         # 新海誠風格
+│   ├── 001.png
+│   └── 002.png
+├── ink/             # 水墨風格
+└── comparison/      # 前後對比</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>效能優化</h2> <h3 data-astro-cid-hzn6opwr>顯存管理</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>batch_size = 4  # 一次處理 4 張
+# 顯卡 8GB 建議: 2-4
+# 顯卡 16GB 建議: 4-8
+# 顯卡 32GB 建議: 8-16</code></pre> <h3 data-astro-cid-hzn6opwr>低顯卡模式</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>python main.py --lowvram --gpu-only</code></pre> <h3 data-astro-cid-hzn6opwr>記憶體釋放</h3> <pre data-astro-cid-hzn6opwr><code data-astro-cid-hzn6opwr>import torch
+def free_memory():
+    torch.cuda.empty_cache()
+for batch in batches:
+    process_batch(batch)
+    free_memory()</code></pre> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>實戰案例</h2> <h3 data-astro-cid-hzn6opwr>案例 1：全家福批量風格化</h3> <p data-astro-cid-hzn6opwr>輸入 50 張家庭照片，吉卜力 + 新海誠 2 種風格，輸出 100 張風格化照片。<br data-astro-cid-hzn6opwr>時間：手動約 5 小時 → 批次約 30 分鐘</p> <h3 data-astro-cid-hzn6opwr>案例 2：電商產品圖</h3> <p data-astro-cid-hzn6opwr>輸入 200 張商品照片，純白背景 + 柔光棚燈風格，輸出 200 張專業產品照。<br data-astro-cid-hzn6opwr>時間：手動約 10 小時 → 批次約 1 小時</p> <h3 data-astro-cid-hzn6opwr>案例 3：社群媒體素材</h3> <p data-astro-cid-hzn6opwr>輸入 30 張生活照，8 種藝術風格，輸出 240 張素材供選擇最佳。<br data-astro-cid-hzn6opwr>時間：手動約 15 小時 → 批次約 2 小時</p> <hr data-astro-cid-hzn6opwr> <h2 data-astro-cid-hzn6opwr>常見問題</h2> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>Q: 批次處理時顯卡記憶體不足？</strong><br data-astro-cid-hzn6opwr>→ 降低 batch_size 或改用 <code data-astro-cid-hzn6opwr>--lowvram</code> 模式。</p> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>Q: 某些圖片處理失敗？</strong><br data-astro-cid-hzn6opwr>→ 加入 try/except 跳過失敗圖片，繼續處理下一張。</p> <p data-astro-cid-hzn6opwr><strong data-astro-cid-hzn6opwr>Q: 輸出品質不一致？</strong><br data-astro-cid-hzn6opwr>→ 確保所有圖片解析度和亮度一致，建議先做預處理。</p> </div> <div class="article-nav" data-astro-cid-hzn6opwr> <a href="https://ram10775.github.ioundefined/blog/" data-astro-cid-hzn6opwr>← 返回教學列表</a> <a href="https://ram10775.github.ioundefined/prompts/" data-astro-cid-hzn6opwr>瀏覽提示詞資料庫 →</a> </div>  </main> <footer class="footer"> <div class="container"> <p>🎨 ComfyUI + Qwen GGUF 提示詞資料庫</p> <p style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem;">
+所有提示詞均基於 Qwen Image Edit GGUF 模型實測有效 · denoise 參數已標註
+</p> </div> </footer> <script type="module">document.querySelectorAll(".prompt-text").forEach(t=>{t.addEventListener("click",()=>{const e=t.dataset.prompt;e&&navigator.clipboard.writeText(e).then(()=>{t.classList.add("copied"),t.classList.add("expanded"),o("✅ 提示詞已複製到剪貼簿！"),setTimeout(()=>t.classList.remove("copied"),2e3)})})});function o(t){const e=document.createElement("div");e.className="toast",e.textContent=t,document.body.appendChild(e),setTimeout(()=>e.remove(),2e3)}</script> </body> </html>
