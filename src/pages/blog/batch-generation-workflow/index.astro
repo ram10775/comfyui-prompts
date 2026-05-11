@@ -1,0 +1,182 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const title = "ComfyUI 批次生圖工作流：一次處理 100 張照片";
+const date = "2026-05-14";
+const category = "進階";
+const readTime = "10 分鐘";
+const tags = ["batch", "工作流", "自動化", "進階"];
+const nextLink = `${baseUrl}/prompts/`;
+const nextTitle = "瀏覽提示詞資料庫";
+---
+<Layout title={`${title} | ComfyUI Prompts`} description='自動化批次處理工作流設定，包含批量載入、參數統一、輸出管理，大幅提升生產效率。'>
+<style>
+  .article-header{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg-primary) 100%)}
+  .article-header h1{font-size:2.2rem;font-weight:800;margin-bottom:16px;line-height:1.3;max-width:800px;margin-left:auto;margin-right:auto}
+  .article-meta{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .article-meta span{background:var(--bg-tertiary);color:var(--text-secondary);padding:4px 12px;border-radius:20px;font-size:0.85rem}
+  .article-body{max-width:800px;margin:0 auto;padding:40px 24px}
+  .article-body h2{font-size:1.5rem;font-weight:700;margin-top:40px;margin-bottom:16px;color:var(--accent)}
+  .article-body h3{font-size:1.2rem;font-weight:600;margin-top:24px;margin-bottom:12px}
+  .article-body p{margin-bottom:16px;line-height:1.8;color:var(--text-secondary)}
+  .article-body code{background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:0.9em;color:var(--accent);font-family:'SF Mono','Fira Code',monospace}
+  .article-body pre{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0}
+  .article-body pre code{background:none;padding:0;color:var(--text-primary)}
+  .article-body ul,.article-body ol{margin:16px 0;padding-left:24px}
+  .article-body li{margin-bottom:8px;line-height:1.6;color:var(--text-secondary)}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+  .article-body strong{color:var(--text-primary)}
+  .article-body blockquote{border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;background:var(--bg-secondary);border-radius:0 8px 8px 0;color:var(--text-secondary)}
+  .article-nav{max-width:800px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}
+  @media(max-width:768px){.article-header h1{font-size:1.6rem}.article-nav{flex-direction:column;gap:12px}}
+</style>
+<div class="article-header">
+  <h1>{title}</h1>
+  <div class="article-meta">
+    <span>{category}</span><span>{date}</span><span>⏱ {readTime}</span>
+    {tags.map(tag => <span>{tag}</span>)}
+  </div>
+</div>
+<div class="article-body">
+  <h2>為什麼需要批次處理？</h2>
+  <p><strong>手動一張一張處理的痛點：</strong></p>
+  <ul>
+    <li>❌ 100 張照片要點擊 100 次 Queue Prompt</li>
+    <li>❌ 每張都要重新載入圖片</li>
+    <li>❌ 參數設定了 100 遍</li>
+    <li>❌ 輸出檔名混亂</li>
+  </ul>
+  <p><strong>批次處理的優勢：</strong></p>
+  <ul>
+    <li>✅ 一次設定，全部自動完成</li>
+    <li>✅ 統一的參數和風格</li>
+    <li>✅ 自動命名的輸出目錄</li>
+    <li>✅ 可以離線運行</li>
+  </ul>
+  <hr />
+  <h2>批次處理工作流架構</h2>
+  <pre><code>LoadImage Batch (批次載入)
+        ↓
+VAE Encode (統一編碼)
+        ↓
+KSampler (統一參數採樣)
+        ↓
+VAE Decode (統一解碼)
+        ↓
+SaveImage Batch (批次儲存)</code></pre>
+  <hr />
+  <h2>方法 1：ComfyUI 內建批次模式</h2>
+  <h3>步驟</h3>
+  <p><strong>1. 準備輸入圖片</strong></p>
+  <pre><code>ComfyUI/input/
+├── photo_001.jpg
+├── photo_002.jpg
+├── photo_003.jpg
+└── ...</code></pre>
+  <p><strong>2. 使用 LoadImage Batch 節點</strong></p>
+  <ul>
+    <li>將所有圖片放到 <code>input/</code> 目錄</li>
+    <li>在 KSampler 設定統一參數</li>
+    <li>點擊 Queue Prompt 一次</li>
+  </ul>
+  <p><strong>3. 輸出管理</strong></p>
+  <pre><code>ComfyUI/output/
+├── batch_001_001.png
+├── batch_002_002.png
+├── batch_003_003.png
+└── ...</code></pre>
+  <hr />
+  <h2>方法 2：Python API 自動化腳本</h2>
+  <h3>安裝依賴</h3>
+  <pre><code>pip install requests tqdm pillow</code></pre>
+  <h3>批次處理腳本</h3>
+  <pre><code>import requests, os, json
+from tqdm import tqdm
+
+COMFYUI_API = 'http://127.0.0.1:8188'
+
+def queue_prompt(workflow):
+    data = dict(prompt=workflow)
+    response = requests.post(COMFYUI_API + '/prompt', json=data)
+    return response.json().get('prompt_id')
+
+def get_history(pid):
+    response = requests.get(COMFYUI_API + '/history/' + pid)
+    return response.json()
+
+def batch_process(input_dir, output_dir, prompt, denoise=0.5, cfg=7.0, steps=20):
+    os.makedirs(output_dir, exist_ok=True)
+    images = [f for f in os.listdir(input_dir)
+              if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    for img_name in tqdm(images, desc='Processing'):
+        with open('workflow.json') as f:
+            workflow = json.load(f)
+        workflow['2']['inputs']['image'] = img_name
+        workflow['6']['inputs']['text'] = prompt
+        workflow['3']['inputs']['denoise'] = denoise
+        workflow['3']['inputs']['cfg'] = cfg
+        workflow['3']['inputs']['steps'] = steps
+        pid = queue_prompt(workflow)
+        while True:
+            history = get_history(pid)
+            if pid in history:
+                break
+    print('Done: ' + str(len(images)) + ' images')
+
+batch_process(
+    input_dir='./photos/', output_dir='./results/',
+    prompt='吉卜力工作室風格',
+    denoise=0.5, cfg=7.0, steps=20
+)</code></pre>
+  <hr />
+  <h2>方法 3：Cron 定時批次</h2>
+  <h3>自動排程處理</h3>
+  <pre><code># 每天凌晨 3 點自動處理新照片
+0 3 * * * cd ~/.hermes/scripts && python batch_img2img.py</code></pre>
+  <hr />
+  <h2>輸出目錄管理</h2>
+  <pre><code>output/
+├── ghibli/          # 吉卜力風格
+│   ├── 001.png
+│   └── 002.png
+├── shinkai/         # 新海誠風格
+│   ├── 001.png
+│   └── 002.png
+├── ink/             # 水墨風格
+└── comparison/      # 前後對比</code></pre>
+  <hr />
+  <h2>效能優化</h2>
+  <h3>顯存管理</h3>
+  <pre><code>batch_size = 4  # 一次處理 4 張
+# 顯卡 8GB 建議: 2-4
+# 顯卡 16GB 建議: 4-8
+# 顯卡 32GB 建議: 8-16</code></pre>
+  <h3>低顯卡模式</h3>
+  <pre><code>python main.py --lowvram --gpu-only</code></pre>
+  <h3>記憶體釋放</h3>
+  <pre><code>import torch
+def free_memory():
+    torch.cuda.empty_cache()
+for batch in batches:
+    process_batch(batch)
+    free_memory()</code></pre>
+  <hr />
+  <h2>實戰案例</h2>
+  <h3>案例 1：全家福批量風格化</h3>
+  <p>輸入 50 張家庭照片，吉卜力 + 新海誠 2 種風格，輸出 100 張風格化照片。<br />時間：手動約 5 小時 → 批次約 30 分鐘</p>
+  <h3>案例 2：電商產品圖</h3>
+  <p>輸入 200 張商品照片，純白背景 + 柔光棚燈風格，輸出 200 張專業產品照。<br />時間：手動約 10 小時 → 批次約 1 小時</p>
+  <h3>案例 3：社群媒體素材</h3>
+  <p>輸入 30 張生活照，8 種藝術風格，輸出 240 張素材供選擇最佳。<br />時間：手動約 15 小時 → 批次約 2 小時</p>
+  <hr />
+  <h2>常見問題</h2>
+  <p><strong>Q: 批次處理時顯卡記憶體不足？</strong><br />→ 降低 batch_size 或改用 <code>--lowvram</code> 模式。</p>
+  <p><strong>Q: 某些圖片處理失敗？</strong><br />→ 加入 try/except 跳過失敗圖片，繼續處理下一張。</p>
+  <p><strong>Q: 輸出品質不一致？</strong><br />→ 確保所有圖片解析度和亮度一致，建議先做預處理。</p>
+</div>
+<div class="article-nav">
+  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${nextLink}`}>{nextTitle} →</a>
+</div>
+</Layout>

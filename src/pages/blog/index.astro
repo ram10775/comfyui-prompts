@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const articles = [
+  { slug: "comfyui-install-guide", title: "ComfyUI 安裝教學：從零開始到第一張圖", summary: "完整 ComfyUI 安裝指南，包含 Python 環境設定、模型下載、GPU 加速，30 分鐘內完成設定。", category: "入門", date: "2026-05-10", readTime: "10 分鐘", tags: ["comfyui","安裝","入門"] },
+  { slug: "prompt-writing-techniques", title: "AI 繪圖 Prompt 撰寫技巧：從新手到大師的 7 個秘訣", summary: "掌握 Prompt 撰寫的核心技巧，包含主題描述、風格定義、光線控制、構圖技巧。", category: "技巧", date: "2026-05-11", readTime: "12 分鐘", tags: ["prompt","技巧","進階"] },
+  { slug: "denoise-parameter-guide", title: "denoise 參數完全指南：決定 AI 生圖品質的關鍵", summary: "深入解析 denoise 參數如何影響生圖結果，從 0.3 到 1.0 的完整實驗數據與最佳實踐。", category: "參數", date: "2026-05-12", readTime: "8 分鐘", tags: ["denoise","參數","img2img"] },
+  { slug: "img2img-style-transfer", title: "img2img 風格轉換實戰：把你的照片變成吉卜力動畫", summary: "手把手教你用 ComfyUI + Qwen GGUF 做圖片風格轉換，從照片到吉卜力、新海誠、水墨畫等 8 種風格。", category: "實戰", date: "2026-05-13", readTime: "15 分鐘", tags: ["img2img","風格","吉卜力"] },
+  { slug: "batch-generation-workflow", title: "ComfyUI 批次生圖工作流：一次處理 100 張照片", summary: "自動化批次處理工作流設定，包含批量載入、參數統一、輸出管理，大幅提升生產效率。", category: "進階", date: "2026-05-14", readTime: "10 分鐘", tags: ["batch","工作流","自動化"] },
+];
+---
+<Layout title='教學 | ComfyUI Prompts' description='ComfyUI 完整教學系列：安裝、Prompt 撰寫、參數調整、img2img 風格轉換、批次處理。'>
+<style>
+  .blog-hero{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg-primary) 100%)}
+  .blog-hero h1{font-size:2.4rem;font-weight:800;margin-bottom:12px}
+  .blog-hero p{color:var(--text-secondary);font-size:1.1rem;max-width:600px;margin:0 auto}
+  .blog-grid{max-width:1000px;margin:0 auto;padding:40px 24px}
+  .blog-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;transition:all 0.2s ease;cursor:pointer;text-decoration:none;display:block}
+  .blog-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+  .blog-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .blog-card-category{background:var(--accent);color:var(--bg-primary);padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600}
+  .blog-card-date{color:var(--text-muted);font-size:0.85rem}
+  .blog-card h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+  .blog-card p{color:var(--text-secondary);font-size:0.95rem;line-height:1.6;margin-bottom:12px}
+  .blog-card-footer{display:flex;justify-content:space-between;align-items:center}
+  .blog-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .blog-card-tags span{background:var(--bg-tertiary);color:var(--text-muted);padding:2px 8px;border-radius:12px;font-size:0.75rem}
+  .blog-card-time{color:var(--text-muted);font-size:0.85rem}
+</style>
+<div class='blog-hero'>
+  <h1>📚 ComfyUI 教學系列</h1>
+  <p>從零開始到進階，完整掌握 AI 繪圖的每一步</p>
+</div>
+<div class='blog-grid'>
+  {articles.map(article => (
+    <a href={`${baseUrl}/blog/${article.slug}/`} class='blog-card'>
+      <div class='blog-card-header'>
+        <span class='blog-card-category'>{article.category}</span>
+        <span class='blog-card-date'>{article.date}</span>
+      </div>
+      <h2>{article.title}</h2>
+      <p>{article.summary}</p>
+      <div class='blog-card-footer'>
+        <div class='blog-card-tags'>{article.tags.map(tag => <span>{tag}</span>)}</div>
+        <span class='blog-card-time'>⏱ {article.readTime}</span>
+      </div>
+    </a>
+  ))}
+</div>
+</Layout>

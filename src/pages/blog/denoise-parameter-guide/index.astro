@@ -1,0 +1,124 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const title = "denoise 參數完全指南：決定 AI 生圖品質的關鍵";
+const date = "2026-05-12";
+const category = "參數";
+const readTime = "8 分鐘";
+const tags = ["denoise", "參數", "img2img", "進階"];
+const nextLink = `${baseUrl}/blog/img2img-style-transfer/`;
+const nextTitle = "img2img 風格轉換";
+---
+<Layout title={`${title} | ComfyUI Prompts`} description='深入解析 denoise 參數如何影響生圖結果，從 0.3 到 1.0 的完整實驗數據與最佳實踐。'>
+<style>
+  .article-header{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg-primary) 100%)}
+  .article-header h1{font-size:2.2rem;font-weight:800;margin-bottom:16px;line-height:1.3;max-width:800px;margin-left:auto;margin-right:auto}
+  .article-meta{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .article-meta span{background:var(--bg-tertiary);color:var(--text-secondary);padding:4px 12px;border-radius:20px;font-size:0.85rem}
+  .article-body{max-width:800px;margin:0 auto;padding:40px 24px}
+  .article-body h2{font-size:1.5rem;font-weight:700;margin-top:40px;margin-bottom:16px;color:var(--accent)}
+  .article-body h3{font-size:1.2rem;font-weight:600;margin-top:24px;margin-bottom:12px}
+  .article-body p{margin-bottom:16px;line-height:1.8;color:var(--text-secondary)}
+  .article-body code{background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:0.9em;color:var(--accent);font-family:'SF Mono','Fira Code',monospace}
+  .article-body pre{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0}
+  .article-body pre code{background:none;padding:0;color:var(--text-primary)}
+  .article-body ul,.article-body ol{margin:16px 0;padding-left:24px}
+  .article-body li{margin-bottom:8px;line-height:1.6;color:var(--text-secondary)}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+  .article-body strong{color:var(--text-primary)}
+  .article-body blockquote{border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;background:var(--bg-secondary);border-radius:0 8px 8px 0;color:var(--text-secondary)}
+  .denoise-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .denoise-table th,.denoise-table td{padding:12px;border:1px solid var(--border);text-align:left}
+  .denoise-table th{background:var(--bg-secondary);font-weight:600;color:var(--accent)}
+  .denoise-table td:first-child{font-weight:600;color:var(--accent)}
+  .article-nav{max-width:800px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}
+  @media(max-width:768px){.article-header h1{font-size:1.6rem}.article-nav{flex-direction:column;gap:12px}}
+</style>
+<div class="article-header">
+  <h1>{title}</h1>
+  <div class="article-meta">
+    <span>{category}</span><span>{date}</span><span>⏱ {readTime}</span>
+    {tags.map(tag => <span>{tag}</span>)}
+  </div>
+</div>
+<div class="article-body">
+  <h2>什麼是 denoise？</h2>
+  <p><strong>denoise（降噪）參數</strong> 是 img2img 模式中最關鍵的設定，它決定：</p>
+  <ul>
+    <li>AI 對原圖的<strong>忠實度</strong>（保留多少原圖內容）</li>
+    <li>AI 對 Prompt 的<strong>遵循程度</strong>（加入多少新元素）</li>
+    <li>最終輸出的<strong>變化幅度</strong></li>
+  </ul>
+  <blockquote>
+    <p>denoise 越低 → 越接近原圖<br />
+    denoise 越高 → 越符合 Prompt，離原圖越遠</p>
+  </blockquote>
+  <hr />
+  <h2>denoise 參數完整對照表</h2>
+  <table class="denoise-table">
+    <thead>
+      <tr><th>denoise</th><th>忠實度</th><th>變化幅度</th><th>適用場景</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0.3</td><td>極高</td><td>極小</td><td>微調細節、修飾</td></tr>
+      <tr><td>0.4</td><td>高</td><td>小</td><td>輕微風格化</td></tr>
+      <tr><td>0.5</td><td>中等</td><td>中等</td><td>風格轉換（最佳）</td></tr>
+      <tr><td>0.6</td><td>中低</td><td>大</td><td>大幅改圖</td></tr>
+      <tr><td>0.7</td><td>低</td><td>很大</td><td>創意重構</td></tr>
+      <tr><td>0.8+</td><td>極低</td><td>極大</td><td>幾乎重新生成</td></tr>
+      <tr><td>1.0</td><td>無</td><td>完全</td><td>text-to-image</td></tr>
+    </tbody>
+  </table>
+  <hr />
+  <h2>各數值實戰體驗</h2>
+  <h3>denoise 0.3 — 微調模式</h3>
+  <p><strong>效果：</strong>幾乎看不出變化，只有細微的顏色和紋理調整。</p>
+  <p><strong>適用：</strong></p>
+  <ul>
+    <li>修飾照片的色調</li>
+    <li>增加一點氛圍感</li>
+    <li>保持原圖不變的前提下微調</li>
+  </ul>
+  <h3>denoise 0.5 — 風格轉換（最常用）</h3>
+  <p><strong>效果：</strong>保留原圖的構圖和主體，但風格完全改變。</p>
+  <p><strong>適用：</strong></p>
+  <ul>
+    <li>照片 → 吉卜力風格</li>
+    <li>照片 → 水墨畫</li>
+    <li>寫實 → 插畫</li>
+  </ul>
+  <h3>denoise 0.7 — 創意重構</h3>
+  <p><strong>效果：</strong>保留大致構圖，但細節大幅改變。</p>
+  <p><strong>適用：</strong></p>
+  <ul>
+    <li>完全改變場景氛圍</li>
+    <li>從照片變成完全不同的藝術風格</li>
+    <li>加入大量 Prompt 描述的新元素</li>
+  </ul>
+  <hr />
+  <h2>最佳實踐建議</h2>
+  <h3>新手建議</h3>
+  <ol>
+    <li>先從 <code>denoise 0.5</code> 開始</li>
+    <li>覺得變化太小 → 調高到 0.6</li>
+    <li>覺得變化太大 → 調低到 0.4</li>
+    <li>每次只調 <code>0.1</code> 的幅度</li>
+  </ol>
+  <h3>進階技巧</h3>
+  <ul>
+    <li><strong>cfg 搭配</strong>：denoise 低時 cfg 也要低（5-6），denoise 高時 cfg 可以高（7-8）</li>
+    <li><strong>steps 搭配</strong>：denoise 低時 steps 可以少（10-15），denoise 高時 steps 要多（20-30）</li>
+    <li><strong>Seed 固定</strong>：測試時固定 Seed，只調 denoise 比較效果</li>
+  </ul>
+  <hr />
+  <h2>常見問題</h2>
+  <p><strong>Q: 為什麼 denoise 0.5 還是看不出變化？</strong><br />→ 確認使用了 img2img 模式，而非 txt2img。txt2img 不需要 denoise 參數。</p>
+  <p><strong>Q: denoise 太高，輸出品質下降？</strong><br />→ 超過 0.7 容易出現結構問題，建議搭配較高的 steps（25+）。</p>
+  <p><strong>Q: 同一張圖不同 denoise 效果差異大？</strong><br />→ 這是正常的。每張原圖的最佳 denoise 不同，建議從 0.5 開始測試。</p>
+</div>
+<div class="article-nav">
+  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
+</div>
+</Layout>

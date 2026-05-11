@@ -1,0 +1,144 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
+const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const title = "img2img 風格轉換實戰：把你的照片變成吉卜力動畫";
+const date = "2026-05-13";
+const category = "實戰";
+const readTime = "15 分鐘";
+const tags = ["img2img", "風格", "吉卜力", "Qwen"];
+const nextLink = `${baseUrl}/blog/batch-generation-workflow/`;
+const nextTitle = "批次生圖工作流";
+---
+<Layout title={`${title} | ComfyUI Prompts`} description='手把手教你用 ComfyUI + Qwen GGUF 做圖片風格轉換，從照片到吉卜力、新海誠、水墨畫等 8 種風格。'>
+<style>
+  .article-header{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg-primary) 100%)}
+  .article-header h1{font-size:2.2rem;font-weight:800;margin-bottom:16px;line-height:1.3;max-width:800px;margin-left:auto;margin-right:auto}
+  .article-meta{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .article-meta span{background:var(--bg-tertiary);color:var(--text-secondary);padding:4px 12px;border-radius:20px;font-size:0.85rem}
+  .article-body{max-width:800px;margin:0 auto;padding:40px 24px}
+  .article-body h2{font-size:1.5rem;font-weight:700;margin-top:40px;margin-bottom:16px;color:var(--accent)}
+  .article-body h3{font-size:1.2rem;font-weight:600;margin-top:24px;margin-bottom:12px}
+  .article-body p{margin-bottom:16px;line-height:1.8;color:var(--text-secondary)}
+  .article-body code{background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:0.9em;color:var(--accent);font-family:'SF Mono','Fira Code',monospace}
+  .article-body pre{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0}
+  .article-body pre code{background:none;padding:0;color:var(--text-primary)}
+  .article-body ul,.article-body ol{margin:16px 0;padding-left:24px}
+  .article-body li{margin-bottom:8px;line-height:1.6;color:var(--text-secondary)}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+  .article-body strong{color:var(--text-primary)}
+  .article-body blockquote{border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;background:var(--bg-secondary);border-radius:0 8px 8px 0;color:var(--text-secondary)}
+  .style-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+  .style-card h3{margin-top:0;color:var(--accent)}
+  .style-card pre{margin:8px 0;padding:12px}
+  .article-nav{max-width:800px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}
+  @media(max-width:768px){.article-header h1{font-size:1.6rem}.article-nav{flex-direction:column;gap:12px}}
+</style>
+<div class="article-header">
+  <h1>{title}</h1>
+  <div class="article-meta">
+    <span>{category}</span><span>{date}</span><span>⏱ {readTime}</span>
+    {tags.map(tag => <span>{tag}</span>)}
+  </div>
+</div>
+<div class="article-body">
+  <h2>準備工作</h2>
+  <h3>需要的模型</h3>
+  <ul>
+    <li><strong>UNet</strong>: Qwen_Image_Edit-Q4_K_M.gguf</li>
+    <li><strong>CLIP</strong>: qwen_2.5_vl_7b_fp8_scaled.safetensors</li>
+    <li><strong>VAE</strong>: qwen_image_vae.safetensors</li>
+  </ul>
+  <h3>工作流結構</h3>
+  <pre><code>LoadImage (載入原圖)
+        ↓
+VAE Encode (編碼圖片)
+        ↓
+CLIP Text Encode (Prompt)
+        ↓
+KSampler (採樣生成)
+        ↓
+VAE Decode (解碼輸出)</code></pre>
+  <h3>關鍵參數</h3>
+  <ul>
+    <li><strong>denoise</strong>: 0.5（風格轉換最佳值）</li>
+    <li><strong>cfg</strong>: 7.0</li>
+    <li><strong>steps</strong>: 20</li>
+    <li><strong>sampler</strong>: dpmpp_2m</li>
+  </ul>
+  <hr />
+  <h2>8 種風格 Prompt 大全</h2>
+  <div class="style-card">
+    <h3>🎨 吉卜力工作室風格</h3>
+    <pre><code>吉卜力工作室風格，宮崎駿水彩畫風，柔和的陽光，
+翠綠的草地，天空飄著朵朵白雲，
+溫暖的氛圍，細膩的光影變化</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>🌸 新海誠風格</h3>
+    <pre><code>新海誠動畫風格，高飽和度，
+夢幻的光線，絢爛的色彩，
+細膩的光影效果，天空中有絢麗的雲彩</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>🖌️ 中國水墨畫風格</h3>
+    <pre><code>中國傳統水墨畫風格，山水畫技法，
+淡墨渲染，留白意境，
+筆觸自然流暢，遠近虛實分明</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>🎭 油畫風格</h3>
+    <pre><code>古典油畫風格，厚塗技法，
+溫暖的棕褐色調，
+細膩的筆觸，柔和的光線，
+古典肖像畫的質感</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>✨ 浮世繪風格</h3>
+    <pre><code>日本浮世繪風格，木版畫技法，
+平塗色塊，線條簡潔有力，
+平面化的構圖，傳統日本美學</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>🌈 賽博龐克風格</h3>
+    <pre><code>賽博龐克風格，霓虹燈光，
+高對比度，紫色和青色調，
+未來都市背景，科技感強</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>📷 復古攝影風格</h3>
+    <pre><code>復古攝影風格，1970 年代色彩，
+暖色調，輕微顆粒感，
+柔焦效果，懷舊氛圍</code></pre>
+  </div>
+  <div class="style-card">
+    <h3>🎪 迪士尼動畫風格</h3>
+    <pre><code>迪士尼動畫風格，卡通化，
+鮮豔的色彩，誇張的表情，
+圓潤的造型，明亮的燈光</code></pre>
+  </div>
+  <hr />
+  <h2>進階技巧</h2>
+  <h3>多風格混合</h3>
+  <pre><code>吉卜力工作室風格混合新海誠風格，
+水彩畫質感加上高飽和度夢幻光線</code></pre>
+  <h3>風格強度控制</h3>
+  <p>調整 denoise 控制風格強度：</p>
+  <ul>
+    <li><code>0.4</code> — 輕微風格化，保留大部分原圖</li>
+    <li><code>0.5</code> — 標準風格轉換</li>
+    <li><code>0.6</code> — 強烈風格化</li>
+  </ul>
+  <h3>Seed 固定</h3>
+  <p>設定固定 Seed 可以重現相同效果，方便比較不同 Prompt 的差異。</p>
+  <hr />
+  <h2>常見問題</h2>
+  <p><strong>Q: 轉換後人物臉部變形？</strong><br />→ 降低 denoise 到 0.4，或在 Prompt 中加入「臉部細節清晰，五官端正」。</p>
+  <p><strong>Q: 風格不明顯？</strong><br />→ 提高 denoise 到 0.6，或加入更多風格關鍵詞。</p>
+  <p><strong>Q: 顏色過於飽和？</strong><br />→ 在 Prompt 中加入「柔和的色彩，自然的色調」。</p>
+</div>
+<div class="article-nav">
+  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
+</div>
+</Layout>
