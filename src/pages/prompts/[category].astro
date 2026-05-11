@@ -29,45 +29,47 @@ const base = "/comfyui-prompts";
 
   <div class="prompts-grid">
     {cat.prompts.map(prompt => (
-      <div class="prompt-card">
-        <div class="prompt-header">
-          <span class="prompt-title">{prompt.title}</span>
-          <span class="prompt-tag">免費</span>
-        </div>
-        <div class="prompt-tags">
-          {prompt.tags.map(tag => <span>{tag}</span>)}
-        </div>
-        <div class="prompt-text" data-prompt={prompt.prompt_zh}>
-          {prompt.prompt_zh}
-        </div>
+      <a href={base + `/prompts/${cat.id}/${prompt.id}/`} class="prompt-card-link">
+        <div class="prompt-card">
+          <div class="prompt-header">
+            <span class="prompt-title">{prompt.title}</span>
+            <span class="prompt-tag">免費</span>
+          </div>
+          <div class="prompt-tags">
+            {prompt.tags.map(tag => <span>{tag}</span>)}
+          </div>
+          <div class="prompt-text" data-prompt={prompt.prompt_zh}>
+            {prompt.prompt_zh}
+          </div>
 
-        <details style="margin-bottom: 12px;">
-          <summary style="cursor: pointer; color: var(--accent); font-size: 0.85rem;">📝 英文提示詞</summary>
-          <div class="prompt-text" data-prompt={prompt.prompt_en} style="margin-top: 8px;">
-            {prompt.prompt_en}
-          </div>
-        </details>
+          <details style="margin-bottom: 12px;">
+            <summary style="cursor: pointer; color: var(--accent); font-size: 0.85rem;">📝 英文提示詞</summary>
+            <div class="prompt-text" data-prompt={prompt.prompt_en} style="margin-top: 8px;">
+              {prompt.prompt_en}
+            </div>
+          </details>
 
-        <div class="params-grid">
-          <div class="param">
-            <div class="param-label">denoise</div>
-            <div class="param-value">{prompt.params.denoise}</div>
+          <div class="params-grid">
+            <div class="param">
+              <div class="param-label">denoise</div>
+              <div class="param-value">{prompt.params.denoise}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">cfg</div>
+              <div class="param-value">{prompt.params.cfg}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">steps</div>
+              <div class="param-value">{prompt.params.steps}</div>
+            </div>
+            <div class="param">
+              <div class="param-label">解析度</div>
+              <div class="param-value">{prompt.params.resolution}</div>
+            </div>
           </div>
-          <div class="param">
-            <div class="param-label">cfg</div>
-            <div class="param-value">{prompt.params.cfg}</div>
-          </div>
-          <div class="param">
-            <div class="param-label">steps</div>
-            <div class="param-value">{prompt.params.steps}</div>
-          </div>
-          <div class="param">
-            <div class="param-label">解析度</div>
-            <div class="param-value">{prompt.params.resolution}</div>
-          </div>
+          <div class="tip">💡 {prompt.tips}</div>
         </div>
-        <div class="tip">💡 {prompt.tips}</div>
-      </div>
+      </a>
     ))}
   </div>
 </div>

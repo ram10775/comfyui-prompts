@@ -1,0 +1,206 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import promptsData from '../../../data/prompts.json';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const cat of promptsData.categories) {
+    for (const prompt of cat.prompts) {
+      paths.push({
+        params: { category: cat.id, id: prompt.id },
+        props: { cat, prompt },
+      });
+    }
+  }
+  return paths;
+}
+
+const { cat, prompt } = Astro.props;
+const base = "/comfyui-prompts";
+
+// Related prompts: same category or sharing tags
+const relatedPrompts = [];
+for (const c of promptsData.categories) {
+  for (const p of c.prompts) {
+    if (p.id === prompt.id) continue;
+    const sharedTags = p.tags.filter(t => prompt.tags.includes(t));
+    if (c.id === cat.id || sharedTags.length > 0) {
+      relatedPrompts.push({ ...p, categoryName: c.name, categoryId: c.id, sharedTags: sharedTags.length });
+    }
+  }
+}
+relatedPrompts.sort((a, b) => b.sharedTags - a.sharedTags);
+const related = relatedPrompts.slice(0, 4);
+
+// FAQ for this prompt
+const faqData = [
+  {
+    question: "ComfyUI 提示詞怎麼用？",
+    answer: "將提示詞複製貼到 ComfyUI 的 CLIPTextEncode 節點（正提示詞），然後按下 Queue Prompt 即可開始生成。建議先使用預設的 denoise、cfg、steps 參數。"
+  },
+  {
+    question: `${prompt.title} 適合什麼類型的照片？`,
+    answer: `這個提示詞最適用於${cat.description}類型的圖片。建議使用 512x512 解析度的輸入圖片，denoise 設為 ${prompt.params.denoise} 可獲得最佳效果。`
+  },
+  {
+    question: "denoise 參數可以調整嗎？",
+    answer: prompt.tips.includes("⚠️") ? prompt.tips : `建議從 denoise ${prompt.params.denoise} 開始。數值越高風格化越強，但原圖保留越少。參考我們的參數指南取得更多細節。`,
+  },
+  {
+    question: "中文提示詞可以直接用嗎？",
+    answer: "可以！Qwen2.5-VL 的 text encoder 原生支援中英雙語，不需要翻譯成英文。但同時也提供了英文版供參考。"
+  },
+];
+---
+<Layout 
+  title={`${prompt.title} - ${cat.name} | ComfyUI 提示詞`} 
+  description={`${prompt.title} - ComfyUI + Qwen GGUF ${cat.name}提示詞。${prompt.prompt_zh} 參數：denoise ${prompt.params.denoise} / cfg ${prompt.params.cfg} / steps ${prompt.params.steps}`}
+/>
+
+<!-- JSON-LD for this prompt page -->
+<script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": `${prompt.title} - ComfyUI 提示詞`,
+  "description": prompt.prompt_zh,
+  "inLanguage": "zh-Hant",
+  "keywords": prompt.tags.concat([prompt.title, cat.name, "ComfyUI", "AI繪圖", "提示詞"]).join(", "),
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "ComfyUI",
+    "applicationCategory": "ArtApplication"
+  }
+})}} />
+
+<!-- FAQ Schema -->
+<script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqData.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+})}} />
+
+<div class="container" style="padding: 40px 24px;">
+  <div class="breadcrumb">
+    <a href={base}>首頁</a> <span>›</span>
+    <a href={base + '/prompts/'}>所有提示詞</a> <span>›</span>
+    <a href={base + `/prompts/${cat.id}/`}>{cat.name}</a> <span>›</span>
+    {prompt.title}
+  </div>
+
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+      <span style="font-size: 2rem;">{cat.icon}</span>
+      <h1 style="font-size: 2rem;">{prompt.title}</h1>
+    </div>
+    <p style="color: var(--text-secondary); margin-bottom: 24px;">
+      {cat.description} | {cat.name}分類
+    </p>
+
+    <div class="prompt-tags" style="margin-bottom: 32px;">
+      {prompt.tags.map(tag => <span>{tag}</span>)}
+      <span style="background: var(--accent-green); color: var(--bg-primary);">免費</span>
+    </div>
+
+    <!-- Chinese Prompt -->
+    <div class="guide-section">
+      <h3>🇹🇼 中文提示詞</h3>
+      <div class="prompt-text" data-prompt={prompt.prompt_zh} style="max-height: 300px;">
+        {prompt.prompt_zh}
+      </div>
+    </div>
+
+    <!-- English Prompt -->
+    <div class="guide-section">
+      <h3>🇬🇧 英文提示詞</h3>
+      <div class="prompt-text" data-prompt={prompt.prompt_en} style="max-height: 300px;">
+        {prompt.prompt_en}
+      </div>
+    </div>
+
+    <!-- Parameters -->
+    <div class="guide-section">
+      <h3>⚙️ 建議參數</h3>
+      <div class="params-grid" style="max-width: 400px;">
+        <div class="param">
+          <div class="param-label">denoise</div>
+          <div class="param-value">{prompt.params.denoise}</div>
+        </div>
+        <div class="param">
+          <div class="param-label">cfg</div>
+          <div class="param-value">{prompt.params.cfg}</div>
+        </div>
+        <div class="param">
+          <div class="param-label">steps</div>
+          <div class="param-value">{prompt.params.steps}</div>
+        </div>
+        <div class="param">
+          <div class="param-label">解析度</div>
+          <div class="param-value">{prompt.params.resolution}</div>
+        </div>
+      </div>
+      <div class="tip" style="margin-top: 16px;">💡 {prompt.tips}</div>
+    </div>
+
+    <!-- How to use -->
+    <div class="guide-section">
+      <h3>📖 使用步驟</h3>
+      <ol style="color: var(--text-secondary); padding-left: 20px; line-height: 2;">
+        <li>在 ComfyUI 中使用 <strong>Qwen Image Edit GGUF</strong> 模型</li>
+        <li>CLIPLoader 的 type 設為 <code>qwen_image</code></li>
+        <li>將上方提示詞複製到 CLIPTextEncode 正提示詞節點</li>
+        <li>設定 denoise = {prompt.params.denoise}、cfg = {prompt.params.cfg}、steps = {prompt.params.steps}</li>
+        <li>輸入圖片放在 ComfyUI 的 <code>input/</code> 目錄</li>
+        <li>按下 Queue Prompt 開始生成</li>
+      </ol>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="guide-section">
+      <h3>❓ 常見問題</h3>
+      {faqData.map(faq => (
+        <details style="margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+          <summary style="cursor: pointer; color: var(--accent); font-weight: 600; margin-bottom: 8px;">{faq.question}</summary>
+          <p style="color: var(--text-secondary); line-height: 1.8; margin-top: 4px;">{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+
+    <!-- Related Prompts -->
+    {related.length > 0 && (
+      <div class="guide-section">
+        <h3>🔗 相關提示詞</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;">
+          {related.map(rp => (
+            <a href={base + `/prompts/${rp.categoryId}/${rp.id}/`} 
+               style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-decoration: none; display: block; transition: all 0.2s;">
+              <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-primary);">{rp.title}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">{rp.categoryName} · {rp.sharedTags} 個共用標籤</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div style="margin-top: 32px;">
+      <a href={base + `/prompts/${cat.id}/`} style="color: var(--accent);">← 回到 {cat.name} 分類</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Copy to clipboard
+  document.querySelectorAll('.prompt-text').forEach(el => {
+    el.addEventListener('click', () => {
+      navigator.clipboard.writeText(el.dataset.prompt);
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 2000);
+    });
+  });
+</script>

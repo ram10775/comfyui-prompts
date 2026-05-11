@@ -4,6 +4,7 @@ import promptsData from '../data/prompts.json';
 
 const categories = promptsData.categories;
 const totalPrompts = categories.reduce((sum, cat) => sum + cat.prompts.length, 0);
+const base = "/comfyui-prompts";
 ---
 <Layout title="ComfyUI Prompts - 中文提示詞資料庫" description="ComfyUI + Qwen GGUF 中文提示詞資料庫，涵蓋風格轉換、寫實人像、角色設計、商業應用等 20+ 經實測有效的提示詞" />
 
@@ -75,42 +76,136 @@ const totalPrompts = categories.reduce((sum, cat) => sum + cat.prompts.length, 0
   <div class="container">
     <h2 class="section-title">🔥 熱門提示詞</h2>
     <div class="prompts-grid">
-      {categories.flatMap(cat => cat.prompts).slice(0, 6).map(prompt => (
-        <div class="prompt-card">
-          <div class="prompt-header">
-            <span class="prompt-title">{prompt.title}</span>
-            <span class="prompt-tag">免費</span>
-          </div>
-          <div class="prompt-tags">
-            {prompt.tags.map(tag => <span>{tag}</span>)}
-          </div>
-          <div class="prompt-text" data-prompt={prompt.prompt_zh}>
-            {prompt.prompt_zh}
-          </div>
-          <div class="params-grid">
-            <div class="param">
-              <div class="param-label">denoise</div>
-              <div class="param-value">{prompt.params.denoise}</div>
+      {categories.flatMap(cat => cat.prompts).slice(0, 6).map(prompt => {
+        const catInfo = categories.find(c => c.prompts.some(p => p.id === prompt.id))!;
+        return (
+          <a href={base + `/prompts/${catInfo.id}/${prompt.id}/`} class="prompt-card-link">
+            <div class="prompt-card">
+              <div class="prompt-header">
+                <span class="prompt-title">{prompt.title}</span>
+                <span class="prompt-tag">免費</span>
+              </div>
+              <div class="prompt-tags">
+                {prompt.tags.map(tag => <span>{tag}</span>)}
+              </div>
+              <div class="prompt-text" data-prompt={prompt.prompt_zh}>
+                {prompt.prompt_zh}
+              </div>
+              <div class="params-grid">
+                <div class="param">
+                  <div class="param-label">denoise</div>
+                  <div class="param-value">{prompt.params.denoise}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">cfg</div>
+                  <div class="param-value">{prompt.params.cfg}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">steps</div>
+                  <div class="param-value">{prompt.params.steps}</div>
+                </div>
+                <div class="param">
+                  <div class="param-label">解析度</div>
+                  <div class="param-value">{prompt.params.resolution}</div>
+                </div>
+              </div>
+              <div class="tip">💡 {prompt.tips}</div>
             </div>
-            <div class="param">
-              <div class="param-label">cfg</div>
-              <div class="param-value">{prompt.params.cfg}</div>
-            </div>
-            <div class="param">
-              <div class="param-label">steps</div>
-              <div class="param-value">{prompt.params.steps}</div>
-            </div>
-            <div class="param">
-              <div class="param-label">解析度</div>
-              <div class="param-value">{prompt.params.resolution}</div>
-            </div>
-          </div>
-          <div class="tip">💡 {prompt.tips}</div>
-        </div>
-      ))}
+          </a>
+        );
+      })}
     </div>
   </div>
 </section>
+
+<!-- FAQ Section -->
+<section class="section" style="background: var(--bg-secondary); padding: 60px 24px;">
+  <div class="container" style="max-width: 800px;">
+    <h2 class="section-title">❓ 常見問題</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>什麼是 ComfyUI？</summary>
+        <p>ComfyUI 是一個開源的 AI 繪圖工具，使用節點式工作流來控制生成過程。相較於 Stable Diffusion WebUI，它有更高的靈活性和效能。搭配 Qwen Image Edit GGUF 模型，可以直接使用中文提示詞生成圖片。</p>
+      </details>
+      <details class="faq-item">
+        <summary>這個網站的提示詞可以用在哪些模型？</summary>
+        <p>本站所有提示詞都經過 Qwen Image Edit GGUF 模型實測驗證。這個模型原生支援中英雙語，不需翻譯即可直接使用中文提示詞。</p>
+      </details>
+      <details class="faq-item">
+        <summary>img2img 的 denoise 參數是什麼？</summary>
+        <p>denoise 決定原圖保留程度與風格轉換強度。數值越低越接近原圖（0.3-0.4 幾乎是原圖），數值越高風格化越強（0.85 幾乎是重繪）。一般推薦從 0.5 開始調整。</p>
+      </details>
+      <details class="faq-item">
+        <summary>免費使用這些提示詞嗎？</summary>
+        <p>是的！本站所有提示詞皆免費使用。你可以複製貼上到 ComfyUI 直接使用，也可以分享給朋友。</p>
+      </details>
+      <details class="faq-item">
+        <summary>需要什麼硬體才能跑 ComfyUI？</summary>
+        <p>建議至少有 NVIDIA 顯卡（4GB+ VRAM）。本站提示詞使用 512x512 解析度，在 V100 32GB 上約 2 分鐘可完成。低階顯卡可能需要更長時間。</p>
+      </details>
+      <details class="faq-item">
+        <summary>為什麼推薦用 Qwen 而不是 SD 1.5？</summary>
+        <p>Qwen Image Edit GGUF 原生支援中文提示詞，不需額外翻譯。img2img 風格轉換效果優於 SD 1.5，且可以使用 GGUF 量化版本節省記憶體。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Schema for homepage -->
+<script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "什麼是 ComfyUI？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ComfyUI 是一個開源的 AI 繪圖工具，使用節點式工作流來控制生成過程。相較於 Stable Diffusion WebUI，它有更高的靈活性和效能。搭配 Qwen Image Edit GGUF 模型，可以直接使用中文提示詞生成圖片。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "這個網站的提示詞可以用在哪些模型？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "本站所有提示詞都經過 Qwen Image Edit GGUF 模型實測驗證。這個模型原生支援中英雙語，不需翻譯即可直接使用中文提示詞。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "img2img 的 denoise 參數是什麼？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "denoise 決定原圖保留程度與風格轉換強度。數值越低越接近原圖（0.3-0.4 幾乎是原圖），數值越高風格化越強（0.85 幾乎是重繪）。一般推薦從 0.5 開始調整。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "免費使用這些提示詞嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "是的！本站所有提示詞皆免費使用。你可以複製貼上到 ComfyUI 直接使用，也可以分享給朋友。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "需要什麼硬體才能跑 ComfyUI？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "建議至少有 NVIDIA 顯卡（4GB+ VRAM）。本站提示詞使用 512x512 解析度，在 V100 32GB 上約 2 分鐘可完成。低階顯卡可能需要更長時間。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "為什麼推薦用 Qwen 而不是 SD 1.5？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Qwen Image Edit GGUF 原生支援中文提示詞，不需額外翻譯。img2img 風格轉換效果優於 SD 1.5，且可以使用 GGUF 量化版本節省記憶體。"
+      }
+    }
+  ]
+})}} />
 
 <script>
   // Search functionality
