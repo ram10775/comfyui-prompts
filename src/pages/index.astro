@@ -40,7 +40,7 @@ const totalPrompts = categories.reduce((sum, cat) => sum + cat.prompts.length, 0
     <h2 class="section-title">📂 瀏覽分類</h2>
     <div class="categories-grid">
       {categories.map(cat => (
-        <a href={`/prompts/${cat.id}/`} class="category-card">
+        <a href={`/comfyui-prompts/prompts/${cat.id}/`} class="category-card">
           <div class="category-icon">{cat.icon}</div>
           <h3>{cat.name}</h3>
           <p>{cat.description}</p>
@@ -117,7 +117,7 @@ const totalPrompts = categories.reduce((sum, cat) => sum + cat.prompts.length, 0
   document.getElementById('search')?.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase();
     if (query.length >= 2) {
-      window.location.href = `/prompts/?q=${encodeURIComponent(query)}`;
+      window.location.href = `/comfyui-prompts/prompts/?q=${encodeURIComponent(query)}`;
     }
   });
 </script>

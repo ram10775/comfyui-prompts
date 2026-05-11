@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = '/comfyui-prompts';
 const articles = [
   { slug: "comfyui-install-guide", title: "ComfyUI 安裝教學：從零開始到第一張圖", summary: "完整 ComfyUI 安裝指南，包含 Python 環境設定、模型下載、GPU 加速，30 分鐘內完成設定。", category: "入門", date: "2026-05-10", readTime: "10 分鐘", tags: ["comfyui","安裝","入門"] },
   { slug: "prompt-writing-techniques", title: "AI 繪圖 Prompt 撰寫技巧：從新手到大師的 7 個秘訣", summary: "掌握 Prompt 撰寫的核心技巧，包含主題描述、風格定義、光線控制、構圖技巧。", category: "技巧", date: "2026-05-11", readTime: "12 分鐘", tags: ["prompt","技巧","進階"] },
@@ -34,7 +33,7 @@ const articles = [
 </div>
 <div class='blog-grid'>
   {articles.map(article => (
-    <a href={`${baseUrl}/blog/${article.slug}/`} class='blog-card'>
+    <a href={`${base}/blog/${article.slug}/`} class='blog-card'>
       <div class='blog-card-header'>
         <span class='blog-card-category'>{article.category}</span>
         <span class='blog-card-date'>{article.date}</span>

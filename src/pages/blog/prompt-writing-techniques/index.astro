@@ -1,13 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 const title = "AI 繪圖 Prompt 撰寫技巧：從新手到大師的 7 個秘訣";
 const date = "2026-05-11";
 const category = "技巧";
 const readTime = "12 分鐘";
 const tags = ["prompt", "技巧", "進階", "AI繪圖"];
-const nextLink = `${baseUrl}/blog/denoise-parameter-guide/`;
+const nextLink = `${base}/blog/denoise-parameter-guide/`;
 const nextTitle = "denoise 參數指南";
 ---
 <Layout title={`${title} | ComfyUI Prompts`} description='掌握 Prompt 撰寫的核心技巧，包含主題描述、風格定義、光線控制、構圖技巧。'>
@@ -124,7 +123,7 @@ const nextTitle = "denoise 參數指南";
   </ol>
 </div>
 <div class="article-nav">
-  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${base}/blog/`}>← 返回教學列表</a>
   <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
 </div>
 </Layout>

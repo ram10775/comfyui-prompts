@@ -1,13 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 const title = "ComfyUI 安裝教學：從零開始到第一張圖";
 const date = "2026-05-10";
 const category = "入門";
 const readTime = "10 分鐘";
 const tags = ["comfyui", "安裝", "入門", "教學"];
-const nextLink = `${baseUrl}/blog/prompt-writing-techniques/`;
+const nextLink = `${base}/blog/prompt-writing-techniques/`;
 const nextTitle = "Prompt 撰寫技巧";
 ---
 <Layout title={`${title} | ComfyUI Prompts`} description='手把手教你安裝 ComfyUI，包含 Python 環境設定、模型下載、GPU 加速，30 分鐘內完成設定。'>
@@ -117,7 +116,7 @@ pip install -r requirements.txt</code></pre>
   <p><strong>Q: 如何匯出工作流？</strong><br />→ 右上角 <strong>Save</strong> 按鈕 → 儲存為 JSON</p>
 </div>
 <div class="article-nav">
-  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${base}/blog/`}>← 返回教學列表</a>
   <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
 </div>
 </Layout>

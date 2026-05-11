@@ -1,13 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 const title = "img2img 風格轉換實戰：把你的照片變成吉卜力動畫";
 const date = "2026-05-13";
 const category = "實戰";
 const readTime = "15 分鐘";
 const tags = ["img2img", "風格", "吉卜力", "Qwen"];
-const nextLink = `${baseUrl}/blog/batch-generation-workflow/`;
+const nextLink = `${base}/blog/batch-generation-workflow/`;
 const nextTitle = "批次生圖工作流";
 ---
 <Layout title={`${title} | ComfyUI Prompts`} description='手把手教你用 ComfyUI + Qwen GGUF 做圖片風格轉換，從照片到吉卜力、新海誠、水墨畫等 8 種風格。'>
@@ -138,7 +137,7 @@ VAE Decode (解碼輸出)</code></pre>
   <p><strong>Q: 顏色過於飽和？</strong><br />→ 在 Prompt 中加入「柔和的色彩，自然的色調」。</p>
 </div>
 <div class="article-nav">
-  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${base}/blog/`}>← 返回教學列表</a>
   <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
 </div>
 </Layout>

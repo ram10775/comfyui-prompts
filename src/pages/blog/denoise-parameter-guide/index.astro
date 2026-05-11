@@ -1,13 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 const title = "denoise 參數完全指南：決定 AI 生圖品質的關鍵";
 const date = "2026-05-12";
 const category = "參數";
 const readTime = "8 分鐘";
 const tags = ["denoise", "參數", "img2img", "進階"];
-const nextLink = `${baseUrl}/blog/img2img-style-transfer/`;
+const nextLink = `${base}/blog/img2img-style-transfer/`;
 const nextTitle = "img2img 風格轉換";
 ---
 <Layout title={`${title} | ComfyUI Prompts`} description='深入解析 denoise 參數如何影響生圖結果，從 0.3 到 1.0 的完整實驗數據與最佳實踐。'>
@@ -118,7 +117,7 @@ const nextTitle = "img2img 風格轉換";
   <p><strong>Q: 同一張圖不同 denoise 效果差異大？</strong><br />→ 這是正常的。每張原圖的最佳 denoise 不同，建議從 0.5 開始測試。</p>
 </div>
 <div class="article-nav">
-  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${base}/blog/`}>← 返回教學列表</a>
   <a href={`${nextLink}`}>下一篇：{nextTitle} →</a>
 </div>
 </Layout>

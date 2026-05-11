@@ -1,8 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 
 // Text-to-Image workflow
 const txt2imgWorkflow = {
@@ -94,7 +93,7 @@ const img2imgWorkflow = {
 
 <div class="container" style="padding: 40px 24px;">
   <div class="breadcrumb">
-    <a href={baseUrl}>首頁</a> <span>›</span> 工作流下載
+    <a href={base}>首頁</a> <span>›</span> 工作流下載
   </div>
 
   <h1 style="font-size: 2rem; margin-bottom: 16px;">📦 ComfyUI 工作流</h1>

@@ -1,13 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-const siteUrl = import.meta.env.SITE || 'https://ram10775.github.io';
-const baseUrl = siteUrl ? `${siteUrl}${Astro.base}` : Astro.base;
+const base = "/comfyui-prompts";
 const title = "ComfyUI 批次生圖工作流：一次處理 100 張照片";
 const date = "2026-05-14";
 const category = "進階";
 const readTime = "10 分鐘";
 const tags = ["batch", "工作流", "自動化", "進階"];
-const nextLink = `${baseUrl}/prompts/`;
+const nextLink = `${base}/prompts/`;
 const nextTitle = "瀏覽提示詞資料庫";
 ---
 <Layout title={`${title} | ComfyUI Prompts`} description='自動化批次處理工作流設定，包含批量載入、參數統一、輸出管理，大幅提升生產效率。'>
@@ -176,7 +175,7 @@ for batch in batches:
   <p><strong>Q: 輸出品質不一致？</strong><br />→ 確保所有圖片解析度和亮度一致，建議先做預處理。</p>
 </div>
 <div class="article-nav">
-  <a href={`${baseUrl}/blog/`}>← 返回教學列表</a>
+  <a href={`${base}/blog/`}>← 返回教學列表</a>
   <a href={`${nextLink}`}>{nextTitle} →</a>
 </div>
 </Layout>
